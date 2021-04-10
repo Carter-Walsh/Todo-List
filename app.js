@@ -7,8 +7,8 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const _ = require("lodash");
 
-// Connect to MongoDB Server (local right now)
-mongoose.connect('mongodb://localhost:27017/todolistDB', {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+// Connect to MongoDB server
+mongoose.connect()
 
 const app = express();
 
