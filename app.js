@@ -7,8 +7,8 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const _ = require("lodash");
 
-// Connect to mongoose localhost
-mongoose.connect("mongodb+srv://admin-carter:test123@cluster0.j31sp.mongodb.net/todolistDB", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+// Connect to MongoDB Server (local right now)
+mongoose.connect('mongodb://localhost:27017/todolistDB', {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 
 const app = express();
 
@@ -44,11 +44,13 @@ const listSchema = {
 
 const List = mongoose.model("List", listSchema);
 
+// GET requests
+
 app.get("/", function(req, res) {
 
   Item.find({}, function(err, foundItems) {
 
-    if (foundItems.length === 0) {
+    if (foundItems.length == 0) {
       Item.insertMany(defaultItems, function(err) {
         if (err) {
           console.log(err);
@@ -64,12 +66,13 @@ app.get("/", function(req, res) {
 });
 
 app.get("/:customListName", function(req, res) {
+  
   let customListName = _.capitalize(req.params.customListName);
 
   List.findOne({name: customListName}, function(err, foundList) {
     if (!err) {
       if (!foundList) {
-        // create a new list
+        // If that list doesn't exist, create a new list based on the parameter the user specified
         const list = new List({
           name: customListName,
           items: defaultItems
@@ -82,6 +85,12 @@ app.get("/:customListName", function(req, res) {
     }
   });
 });
+
+app.get("/about", function(req, res){
+  res.render("about");
+});
+
+// POST requests
 
 app.post("/", function(req, res){
 
@@ -104,8 +113,8 @@ app.post("/", function(req, res){
   }
 });
 
-
 app.post("/delete", function(req, res) {
+
   const checkedItemId = req.body.checkbox;
   const listName = req.body.listName;
 
@@ -123,22 +132,15 @@ app.post("/delete", function(req, res) {
       }
     });
   }
-
-
 });
 
-
-
-app.get("/about", function(req, res){
-  res.render("about");
-});
+// Starting local server
 
 let port = process.env.PORT;
 if (port == null || port == "") {
   port = 3000;
 }
-app.listen(port);
 
 app.listen(port, function() {
-  console.log("Server has started on port 3000");
+  console.log("Server has started successfully!");
 });
